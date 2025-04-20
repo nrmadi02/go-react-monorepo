@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:backend": "cd backend && go run main.go",
+    "dev:frontend": "cd frontend && pnpm dev",
     "dev": "concurrently \"cd frontend && pnpm dev \" --prefix frontend"
   },
   "keywords": [],
