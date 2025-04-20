@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/nrmadi02/go_react_monorepo/backend/dto"
 	"github.com/nrmadi02/go_react_monorepo/backend/models"
 	"github.com/nrmadi02/go_react_monorepo/backend/repository"
 )
@@ -22,20 +23,45 @@ func NewUserHandler(repo *repository.UserRepository) *UserHandler {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param user body models.User true "User Data"
+// @Param user body dto.CreateUserRequest true "User Data"
 // @Success 201 {object} models.User
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /users [post]
 func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
-	user := new(models.User)
-	if err := c.BodyParser(user); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	var req dto.CreateUserRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Invalid request body",
+			Errors:  []string{err.Error()},
+		})
+	}
+	// VALIDASI INPUT
+	errs := dto.ValidateRequest(req)
+	if len(errs) > 0 {
+		return c.Status(400).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Validation failed",
+			Errors:  errs,
+		})
+	}
+	user := &models.User{
+		Name:  req.Name,
+		Email: req.Email,
 	}
 	if err := h.Repo.CreateUser(user); err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(500).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Failed to create user",
+			Errors:  []string{err.Error()},
+		})
 	}
-	return c.Status(201).JSON(user)
+	return c.Status(201).JSON(dto.SuccessResponse{
+		Status:  true,
+		Message: "User created successfully",
+		Data:    user,
+	})
 }
 
 // GetUsers godoc
@@ -49,9 +75,17 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
 	users, err := h.Repo.GetUsers()
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(500).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Failed to fetch users",
+			Errors:  []string{err.Error()},
+		})
 	}
-	return c.JSON(users)
+	return c.JSON(dto.SuccessResponse{
+		Status:  true,
+		Message: "Users fetched successfully",
+		Data:    users,
+	})
 }
 
 // GetUser godoc
@@ -67,13 +101,25 @@ func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
 func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+		return c.Status(400).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Invalid user ID",
+			Errors:  []string{err.Error()},
+		})
 	}
 	user, err := h.Repo.GetUserByID(uint(id))
 	if err != nil {
-		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
+		return c.Status(404).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "User not found",
+			Errors:  []string{err.Error()},
+		})
 	}
-	return c.JSON(user)
+	return c.JSON(dto.SuccessResponse{
+		Status:  true,
+		Message: "User fetched successfully",
+		Data:    user,
+	})
 }
 
 // UpdateUser godoc
@@ -83,7 +129,7 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path int true "User ID"
-// @Param user body models.User true "User Data"
+// @Param user body dto.CreateUserRequest true "User Data"
 // @Success 200 {object} models.User
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
@@ -92,19 +138,51 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+		return c.Status(400).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Invalid user ID",
+			Errors:  []string{err.Error()},
+		})
 	}
 	user, err := h.Repo.GetUserByID(uint(id))
 	if err != nil {
-		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
+		return c.Status(404).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "User not found",
+			Errors:  []string{err.Error()},
+		})
 	}
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	var req dto.CreateUserRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Invalid request body",
+			Errors:  []string{err.Error()},
+		})
 	}
+	// VALIDASI INPUT
+	errs := dto.ValidateRequest(req)
+	if len(errs) > 0 {
+		return c.Status(400).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Validation failed",
+			Errors:  errs,
+		})
+	}
+	user.Name = req.Name
+	user.Email = req.Email
 	if err := h.Repo.UpdateUser(&user); err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(500).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Failed to update user",
+			Errors:  []string{err.Error()},
+		})
 	}
-	return c.JSON(user)
+	return c.JSON(dto.SuccessResponse{
+		Status:  true,
+		Message: "User updated successfully",
+		Data:    user,
+	})
 }
 
 // DeleteUser godoc
@@ -120,10 +198,18 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+		return c.Status(400).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Invalid user ID",
+			Errors:  []string{err.Error()},
+		})
 	}
 	if err := h.Repo.DeleteUser(uint(id)); err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(500).JSON(dto.ErrorResponse{
+			Status:  false,
+			Message: "Failed to delete user",
+			Errors:  []string{err.Error()},
+		})
 	}
 	return c.SendStatus(204)
 }
