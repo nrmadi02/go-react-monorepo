@@ -5,6 +5,14 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRepositoryIface interface {
+	CreateUser(user *models.User) error
+	GetUsers() ([]models.User, error)
+	GetUserByID(id uint) (models.User, error)
+	UpdateUser(user *models.User) error
+	DeleteUser(id uint) error
+}
+
 type UserRepository struct {
 	DB *gorm.DB
 }
@@ -34,5 +42,12 @@ func (r *UserRepository) UpdateUser(user *models.User) error {
 }
 
 func (r *UserRepository) DeleteUser(id uint) error {
-	return r.DB.Delete(&models.User{}, id).Error
+	result := r.DB.Delete(&models.User{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
 }

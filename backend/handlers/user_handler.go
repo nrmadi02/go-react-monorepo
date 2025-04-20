@@ -7,13 +7,14 @@ import (
 	"github.com/nrmadi02/go_react_monorepo/backend/dto"
 	"github.com/nrmadi02/go_react_monorepo/backend/models"
 	"github.com/nrmadi02/go_react_monorepo/backend/repository"
+	"gorm.io/gorm"
 )
 
 type UserHandler struct {
-	Repo *repository.UserRepository
+	Repo repository.UserRepositoryIface
 }
 
-func NewUserHandler(repo *repository.UserRepository) *UserHandler {
+func NewUserHandler(repo repository.UserRepositoryIface) *UserHandler {
 	return &UserHandler{Repo: repo}
 }
 
@@ -204,7 +205,15 @@ func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 			Errors:  []string{err.Error()},
 		})
 	}
-	if err := h.Repo.DeleteUser(uint(id)); err != nil {
+	err = h.Repo.DeleteUser(uint(id))
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(404).JSON(dto.ErrorResponse{
+				Status:  false,
+				Message: "User not found",
+				Errors:  []string{err.Error()},
+			})
+		}
 		return c.Status(500).JSON(dto.ErrorResponse{
 			Status:  false,
 			Message: "Failed to delete user",
