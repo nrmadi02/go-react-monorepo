@@ -1,0 +1,399 @@
+openapi: 3.0.0
+info:
+  description: Deskripsi API
+  title: Go React Monorepo API
+  contact: {}
+  version: 1.0.0
+paths:
+  /auth/login:
+    post:
+      description: Authenticate user and get access token
+      tags:
+        - auth
+      summary: Login user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/dto.LoginRequest"
+        description: Login Request
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/dto.SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/dto.AuthResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  /auth/me:
+    get:
+      security:
+        - BearerAuth: []
+      description: Get profile of the authenticated user (ID dari token)
+      tags:
+        - auth
+      summary: Get current user info
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/dto.SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/dto.MeResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  /auth/register:
+    post:
+      description: Register a new user account
+      tags:
+        - auth
+      summary: Register user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/dto.RegisterRequest"
+        description: Register Request
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/dto.SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/dto.AuthResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  /users:
+    get:
+      security:
+        - BearerAuth: []
+      description: Get a list of all users
+      tags:
+        - users
+      summary: Get all users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/dto.SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/dto.UserResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+    post:
+      security:
+        - BearerAuth: []
+      description: Create a new user with the input payload
+      tags:
+        - users
+      summary: Create a new user
+      requestBody:
+        $ref: "#/components/requestBodies/dto.CreateUserRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/dto.SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/dto.UserResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+  "/users/{id}":
+    get:
+      security:
+        - BearerAuth: []
+      description: Get details of a user by ID
+      tags:
+        - users
+      summary: Get user by ID
+      parameters:
+        - description: User ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/dto.SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/dto.UserResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+    put:
+      security:
+        - BearerAuth: []
+      description: Update details of a user by ID
+      tags:
+        - users
+      summary: Update user by ID
+      parameters:
+        - description: User ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        $ref: "#/components/requestBodies/dto.CreateUserRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/dto.SuccessResponse"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/dto.UserResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+    delete:
+      security:
+        - BearerAuth: []
+      description: Delete a user by ID
+      tags:
+        - users
+      summary: Delete user by ID
+      parameters:
+        - description: User ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/dto.ErrorResponse"
+components:
+  requestBodies:
+    dto.CreateUserRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/dto.CreateUserRequest"
+      description: User Data
+      required: true
+  securitySchemes:
+    BearerAuth:
+      description: 'JWT Authorization header using the Bearer scheme. Example: "Bearer
+        {token}"'
+      type: apiKey
+      name: Authorization
+      in: header
+  schemas:
+    dto.AuthResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        user:
+          $ref: "#/components/schemas/models.User"
+    dto.CreateUserRequest:
+      type: object
+      required:
+        - email
+        - name
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+    dto.ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+        status:
+          type: boolean
+    dto.LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    dto.MeResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/models.User"
+    dto.RegisterRequest:
+      type: object
+      required:
+        - email
+        - name
+        - password
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        password:
+          type: string
+    dto.SuccessResponse:
+      type: object
+      properties:
+        data: {}
+        message:
+          type: string
+        status:
+          type: boolean
+    dto.UserResponse:
+      type: object
+      properties:
+        created_at:
+          type: string
+        email:
+          type: string
+        id:
+          type: integer
+        name:
+          type: string
+        updated_at:
+          type: string
+    models.User:
+      type: object
+      properties:
+        created_at:
+          type: string
+        email:
+          type: string
+        id:
+          type: integer
+        name:
+          type: string
+        updated_at:
+          type: string

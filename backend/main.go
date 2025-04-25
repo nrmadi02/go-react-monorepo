@@ -1,3 +1,7 @@
+// @title Go React Monorepo API
+// @version 1.0.0
+// @description Deskripsi API
+
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
@@ -51,6 +55,11 @@ func main() {
 	routes.RegisterAuthRoutes(app, authHandler)
 
 	app.Get("/swagger/*", swagger)
+
+	app.Get("/openapi/swagger.yaml", func(c *fiber.Ctx) error {
+		c.Type("yaml")
+		return c.SendFile("./docs/openapi3.yaml")
+	})
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")

@@ -7,12 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:backend": "cd backend && go run main.go",
     "dev:frontend": "cd frontend && pnpm dev",
-    "dev": "concurrently \"cd backend && air\" \"cd frontend && pnpm dev\" --kill-others-on-fail", 
+    "dev": "concurrently \"cd backend && air\" \"cd frontend && pnpm dev\" --kill-others-on-fail",
     "install:all": "cd backend && go mod download && cd ../frontend && pnpm install",
     "build:all": "cd backend && go build && cd ../frontend && pnpm build",
     "start:backend": "cd backend && go run main.go",
     "start:frontend": "cd frontend && pnpm start",
-    "start": "concurrently \"cd backend && go run main.go\" \"cd frontend && pnpm start\" --kill-others-on-fail"
+    "start": "concurrently \"cd backend && go run main.go\" \"cd frontend && pnpm start\" --kill-others-on-fail",
+    "generate:all": "concurrently \"cd backend && ~/go/bin/swag init -g main.go -o ./docs\" \"cd backend && npx swagger2openapi ./docs/swagger.json -o ./docs/openapi3.yaml\"",
+    "generate:openapi": "cd frontend && pnpm run generate:openapi"
   },
   "keywords": [],
   "author": "",

@@ -22,7 +22,7 @@ func NewAuthHandler(accountRepo repository.AccountRepositoryIface) *AuthHandler 
 // @Accept json
 // @Produce json
 // @Param data body dto.LoginRequest true "Login Request"
-// @Success 200 {object} dto.AuthResponse
+// @Success 200 {object} dto.SuccessResponse{data=dto.AuthResponse}
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 401 {object} dto.ErrorResponse
 // @Router /auth/login [post]
@@ -76,7 +76,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param data body dto.RegisterRequest true "Register Request"
-// @Success 200 {object} dto.AuthResponse
+// @Success 200 {object} dto.SuccessResponse{data=dto.AuthResponse}
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /auth/register [post]
@@ -129,7 +129,7 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 // @Description Get profile of the authenticated user (ID dari token)
 // @Tags auth
 // @Produce json
-// @Success 200 {object} dto.MeResponse
+// @Success 200 {object} dto.SuccessResponse{data=dto.MeResponse}
 // @Failure 401 {object} dto.ErrorResponse
 // @Failure 404 {object} dto.ErrorResponse
 // @Security BearerAuth

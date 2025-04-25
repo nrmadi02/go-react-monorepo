@@ -25,9 +25,9 @@ func NewUserHandler(repo repository.UserRepositoryIface) *UserHandler {
 // @Accept json
 // @Produce json
 // @Param user body dto.CreateUserRequest true "User Data"
-// @Success 201 {object} dto.UserResponse
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 201 {object} dto.SuccessResponse{data=dto.UserResponse}
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Security BearerAuth
 // @Router /users [post]
 func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
@@ -77,8 +77,8 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 // @Description Get a list of all users
 // @Tags users
 // @Produce json
-// @Success 200 {array} dto.UserResponse
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} dto.SuccessResponse{data=[]dto.UserResponse}
+// @Failure 500 {object} dto.ErrorResponse
 // @Security BearerAuth
 // @Router /users [get]
 func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
@@ -115,9 +115,9 @@ func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
 // @Tags users
 // @Produce json
 // @Param id path int true "User ID"
-// @Success 200 {object} dto.UserResponse
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
+// @Success 200 {object} dto.SuccessResponse{data=dto.UserResponse}
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
 // @Security BearerAuth
 // @Router /users/{id} [get]
 func (h *UserHandler) GetUser(c *fiber.Ctx) error {
@@ -158,10 +158,10 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path int true "User ID"
 // @Param user body dto.CreateUserRequest true "User Data"
-// @Success 200 {object} dto.UserResponse
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} dto.SuccessResponse{data=dto.UserResponse}
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Security BearerAuth
 // @Router /users/{id} [put]
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
@@ -227,8 +227,8 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path int true "User ID"
 // @Success 204 {string} string "No Content"
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Security BearerAuth
 // @Router /users/{id} [delete]
 func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {

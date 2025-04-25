@@ -9,6 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import ReactQueryLayout from "common/layout/react-query.layout";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -33,7 +34,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <ReactQueryLayout>
+          {children}
+        </ReactQueryLayout>
         <ScrollRestoration />
         <Scripts />
       </body>

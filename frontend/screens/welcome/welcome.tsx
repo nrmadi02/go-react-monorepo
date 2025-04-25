@@ -1,7 +1,19 @@
+import type { paths } from "common/schema/openapi";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
+import createFetchClient from "openapi-fetch";
+import createClient from "openapi-react-query";
+
+const client = createFetchClient<paths>({ baseUrl: "http://localhost:8000" });
+const $api = createClient(client);
+
 
 export function Welcome() {
+
+  const { data } = $api.useQuery('get', '/users')
+
+  console.log(data)
+  
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
