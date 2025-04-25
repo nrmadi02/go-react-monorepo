@@ -25,9 +25,10 @@ func NewUserHandler(repo repository.UserRepositoryIface) *UserHandler {
 // @Accept json
 // @Produce json
 // @Param user body dto.CreateUserRequest true "User Data"
-// @Success 201 {object} models.User
+// @Success 201 {object} dto.UserResponse
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
+// @Security BearerAuth
 // @Router /users [post]
 func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	var req dto.CreateUserRequest
@@ -61,7 +62,13 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	return c.Status(201).JSON(dto.SuccessResponse{
 		Status:  true,
 		Message: "User created successfully",
-		Data:    user,
+		Data: dto.UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
 	})
 }
 
@@ -70,8 +77,9 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 // @Description Get a list of all users
 // @Tags users
 // @Produce json
-// @Success 200 {array} models.User
+// @Success 200 {array} dto.UserResponse
 // @Failure 500 {object} map[string]string
+// @Security BearerAuth
 // @Router /users [get]
 func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
 	users, err := h.Repo.GetUsers()
@@ -85,7 +93,19 @@ func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
 	return c.JSON(dto.SuccessResponse{
 		Status:  true,
 		Message: "Users fetched successfully",
-		Data:    users,
+		Data: func() []dto.UserResponse {
+			resp := make([]dto.UserResponse, len(users))
+			for i, u := range users {
+				resp[i] = dto.UserResponse{
+					ID:        u.ID,
+					Name:      u.Name,
+					Email:     u.Email,
+					CreatedAt: u.CreatedAt,
+					UpdatedAt: u.UpdatedAt,
+				}
+			}
+			return resp
+		}(),
 	})
 }
 
@@ -95,9 +115,10 @@ func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
 // @Tags users
 // @Produce json
 // @Param id path int true "User ID"
-// @Success 200 {object} models.User
+// @Success 200 {object} dto.UserResponse
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
+// @Security BearerAuth
 // @Router /users/{id} [get]
 func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
@@ -119,7 +140,13 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	return c.JSON(dto.SuccessResponse{
 		Status:  true,
 		Message: "User fetched successfully",
-		Data:    user,
+		Data: dto.UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
 	})
 }
 
@@ -131,10 +158,11 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path int true "User ID"
 // @Param user body dto.CreateUserRequest true "User Data"
-// @Success 200 {object} models.User
+// @Success 200 {object} dto.UserResponse
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
+// @Security BearerAuth
 // @Router /users/{id} [put]
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
@@ -182,7 +210,13 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	return c.JSON(dto.SuccessResponse{
 		Status:  true,
 		Message: "User updated successfully",
-		Data:    user,
+		Data: dto.UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
 	})
 }
 
@@ -195,6 +229,7 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 // @Success 204 {string} string "No Content"
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
+// @Security BearerAuth
 // @Router /users/{id} [delete]
 func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))

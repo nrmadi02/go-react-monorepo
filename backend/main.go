@@ -1,3 +1,8 @@
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description JWT Authorization header using the Bearer scheme. Example: "Bearer {token}"
+
 package main
 
 import (
@@ -37,10 +42,13 @@ func main() {
 	config.ConnectDatabase()
 	config.MigrateDatabase()
 
-	repo := repository.NewUserRepository(config.DB)
-	handler := handlers.NewUserHandler(repo)
+	userRepo := repository.NewUserRepository(config.DB)
+	userHandler := handlers.NewUserHandler(userRepo)
+	routes.RegisterUserRoutes(app, userHandler)
 
-	routes.RegisterUserRoutes(app, handler)
+	authRepo := repository.NewAccountRepository(config.DB)
+	authHandler := handlers.NewAuthHandler(authRepo)
+	routes.RegisterAuthRoutes(app, authHandler)
 
 	app.Get("/swagger/*", swagger)
 

@@ -3,10 +3,11 @@ package routes
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/nrmadi02/go_react_monorepo/backend/handlers"
+	"github.com/nrmadi02/go_react_monorepo/backend/middleware"
 )
 
 func RegisterUserRoutes(app *fiber.App, handler *handlers.UserHandler) {
-	user := app.Group("/users")
+	user := app.Group("/users", middleware.JWTProtected())
 	user.Post("/", handler.CreateUser)
 	user.Get("/", handler.GetUsers)
 	user.Get("/:id", handler.GetUser)

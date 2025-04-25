@@ -6,10 +6,9 @@ import (
 
 var validate = validator.New()
 
-// ValidateRequest performs struct tag validation and calls custom Validate() if present
 func ValidateRequest(s any) []string {
 	errs := []string{}
-	// Tag-based validation
+
 	err := validate.Struct(s)
 	if err != nil {
 		var customMsg map[string]map[string]string
