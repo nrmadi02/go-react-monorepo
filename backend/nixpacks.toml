@@ -20,7 +20,7 @@ cmds = [
 # Tahap build: hasilkan binary statis kecil bernama app
 [phases.build]
 cmds = [
-  "go build -o /workspace/app ./..."
+  "go build -o /workspace/app ."
 ]
 
 # Tahap start: jalankan binary yang sudah dibuat
