@@ -1,0 +1,26 @@
+# nixpacks.toml
+# ---------------------------------------
+# Menggunakan Node 20 LTS yang sudah ada di Nix.
+[phases.setup]
+# corepack dipakai agar npm/pnpm/yarn siap pakai bila diperlukan
+nixPkgs = ["nodejs_20", "corepack"]
+
+# ---------------------------------------
+# Instalasi dependensi (mengunci versi & melewati post‑install script yang tidak dibutuhkan di CI)
+[phases.install]
+cmds = [
+  "corepack enable",          # aktifkan corepack (opsional, tapi baik ada)
+  "pnpm install --frozen-lockfile"   # lebih cepat & deterministic daripada `npm install`
+]
+
+# ---------------------------------------
+# Proses build (menjalankan script build yang sudah didefinisikan di package.json)
+[phases.build]
+cmds = [
+  "pnpm run build"             # akan mem‐build server + assets via `react-router build`
+]
+
+# ---------------------------------------
+# Perintah start untuk production
+[start]
+cmd = "pnpm run start"
