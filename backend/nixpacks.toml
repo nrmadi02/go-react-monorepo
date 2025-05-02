@@ -20,7 +20,7 @@ cmds = [
 # Tahap build: hasilkan binary statis kecil bernama app
 [phases.build]
 cmds = [
-  "CGO_ENABLED=0 GOOS=linux go build -ldflags='-s -w' -o /workspace/app ./..."
+  "go build -o /workspace/app ./..."
 ]
 
 # Tahap start: jalankan binary yang sudah dibuat
