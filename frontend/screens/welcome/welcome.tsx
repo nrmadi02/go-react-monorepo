@@ -5,7 +5,7 @@ import createFetchClient from "openapi-fetch";
 import createClient from "openapi-react-query";
 
 const client = createFetchClient<paths>({
-  baseUrl: process.env.VITE_BACKEND_URL,
+  baseUrl: import.meta.env.VITE_BACKEND_URL,
 });
 const $api = createClient(client);
 
