@@ -9,13 +9,11 @@ providers = ["go"]
 
 # Gunakan direktori backend sebagai workspace saat build
 [variables]
-WORKSPACE_DIR = "backend"
 PORT          = "3040"   # Coolify akan meng‑export PORT secara otomatis; ini hanya default.
 
 # Tahap install: unduh dependency Go
 [phases.install]
 cmds = [
-  "cd $WORKSPACE_DIR",
   "go mod download"
 ]
 
