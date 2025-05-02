@@ -4,7 +4,9 @@ import logoLight from "./logo-light.svg";
 import createFetchClient from "openapi-fetch";
 import createClient from "openapi-react-query";
 
-const client = createFetchClient<paths>({ baseUrl: "http://localhost:8000" });
+const client = createFetchClient<paths>({
+  baseUrl: process.env.VITE_BACKEND_URL,
+});
 const $api = createClient(client);
 
 

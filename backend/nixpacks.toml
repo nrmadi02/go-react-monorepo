@@ -1,0 +1,31 @@
+# .nixpacks.toml
+# ------------------------------------------
+# Folder repo Anda:
+# .
+# ├─ backend/          <-- berisi main.go, go.mod, dll.
+# └─ (folder lain…)
+
+providers = ["go"]
+
+# Gunakan direktori backend sebagai workspace saat build
+[variables]
+WORKSPACE_DIR = "backend"
+PORT          = "3040"   # Coolify akan meng‑export PORT secara otomatis; ini hanya default.
+
+# Tahap install: unduh dependency Go
+[phases.install]
+cmds = [
+  "cd $WORKSPACE_DIR",
+  "go mod download"
+]
+
+# Tahap build: hasilkan binary statis kecil bernama app
+[phases.build]
+cmds = [
+  "cd $WORKSPACE_DIR",
+  "CGO_ENABLED=0 GOOS=linux go build -ldflags='-s -w' -o /workspace/app ./..."
+]
+
+# Tahap start: jalankan binary yang sudah dibuat
+[start]
+cmd = "/workspace/app"
